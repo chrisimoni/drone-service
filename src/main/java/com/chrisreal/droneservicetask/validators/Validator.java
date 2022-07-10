@@ -3,11 +3,9 @@ package com.chrisreal.droneservicetask.validators;
 import org.springframework.stereotype.Service;
 
 import com.chrisreal.droneservicetask.dto.DroneDto;
+import com.chrisreal.droneservicetask.dto.MedicationDto;
 import com.chrisreal.droneservicetask.exception.BadRequestException;
 
-/**
- * Created by Athanasius.Lawrence on 26/04/2022.
- */
 @Service
 public class Validator {
 
@@ -46,8 +44,51 @@ public class Validator {
         }
     }
 
+    public void validateMedication(MedicationDto medicationDto) throws BadRequestException {
+
+        if (isNullOrEmptyString(medicationDto.getCode())) {
+            throw new BadRequestException("Code is required");
+        }
+
+        // check for special chars
+        for(int i =0; i < medicationDto.getCode().length(); i++){
+            int c = medicationDto.getCode().charAt(i);
+            if(!isUppercaseLetter(c) && medicationDto.getCode().charAt(i) != '_' && !isDigit(c)){
+                throw new BadRequestException("Code should be only Uppercase, underscore and numbers");
+            }
+        }
+
+        if (isNullOrEmptyString(medicationDto.getName())) {
+            throw new BadRequestException("Name is required");
+        }
+
+        // name should be only letters, numbers, - and _
+        for(int i =0; i < medicationDto.getName().length(); i++){
+            int c = medicationDto.getName().charAt(i);
+            if(!isLowerCase(c) && !isUppercaseLetter(c) && c != (int)'_' && c != (int)'-'){
+                throw new BadRequestException("Name should be only letters, numbers, - and _");
+            }
+        }
+
+        if (medicationDto.getWeight() == null) {
+            throw new BadRequestException("Weight is required");
+        }
+    }
+
     public static boolean isNullOrEmptyString(String stringValue) {
         return (null == stringValue || stringValue.trim().equals(""));
+    }
+
+    private boolean isLowerCase(int c) {
+        return (c >= 97 && c <= 122);
+    }
+
+    private boolean isUppercaseLetter(int c) {
+        return (c >= 65 && c <= 90);
+    }
+
+    private boolean isDigit(int c) {
+        return (c >= 48 && c <= 57);
     }
 
 }
