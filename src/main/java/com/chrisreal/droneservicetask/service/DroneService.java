@@ -67,4 +67,20 @@ public class DroneService {
 
 		return new DroneResponse("200", "Drones retrieved successfully.", drones.get());
 	}
+
+	public void updateDroneState(String serialNo, DroneState droneState) throws NotFoundException {
+		Optional<Drone> drones = droneRepository.findById(serialNo);
+		if (drones.isEmpty())
+			throw new NotFoundException("No drone found with the given serial number");
+
+		Drone drone = drones.get();
+		drone.setState(droneState);
+
+		droneRepository.save(drone);
+	}
+
+	public DroneResponse retrieveAllDrones() {
+		List<Drone> drones = droneRepository.findAll();
+		return new DroneResponse("200", "Drones retrieved successfully.", drones);
+	}
 }
